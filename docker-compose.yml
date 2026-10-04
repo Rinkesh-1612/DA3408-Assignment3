@@ -1,0 +1,83 @@
+
+# Assignment 3: cluster configuration and network setup.
+# Two clusters. Each cluster has 1 coordinator and 2 workers on one private network.
+# Run only one cluster at a time:
+#docker compose --profile spark up -d  /   docker compose --profile spark down
+#docker compose --profile ray up -d /   docker compose --profile ray down
+name: da-aiops-a3        
+x-spark: &spark            
+  image: apache/spark:4.2.0-scala2.13-java17-python3-ubuntu
+  profiles: [spark]
+  networks: [a3net]
+  volumes:
+    - ./:/app                     # Code, data and output. All nodes use this folder.
+    - /etc/passwd:/etc/passwd:ro 
+    - /etc/group:/etc/group:ro
+  user: "1000:1000"
+  working_dir: /app
+  environment:
+    HOME: /tmp
+    SPARK_WORKER_DIR: /tmp/spark-work
+
+x-ray: &ray                       # Settings for all Ray containers.
+  image: rayproject/ray:2.58.0-py312-cpu
+  profiles: [ray]
+  networks: [a3net]
+  volumes:
+    - ./:/app
+  working_dir: /app
+  shm_size: 2gb                   # Ray keeps data blocks in shared memory (/dev/shm). The Docker default is only 64 MB.
+
+services:
+  spark-master:                
+    <<: *spark
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master --host spark-master --port 7077 --webui-port 8080
+    ports:
+      - "127.0.0.1:8082:8080"     # Spark master web UI.
+      - "127.0.0.1:4040:4040"     # Spark application UI.
+    cpus: 2
+    mem_limit: 4g
+
+  spark-worker-1:                
+    <<: *spark
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker --cores 2 --memory 3g spark://spark-master:7077
+    depends_on: [spark-master]
+    restart: on-failure
+    cpus: 2
+    mem_limit: 6g
+
+  spark-worker-2:
+    <<: *spark
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker --cores 2 --memory 3g spark://spark-master:7077
+    depends_on: [spark-master]
+    restart: on-failure
+    cpus: 2
+    mem_limit: 6g
+
+  ray-head:                      
+    <<: *ray
+    command: ray start --head --num-cpus=0 --port=6379 --dashboard-host=0.0.0.0 --dashboard-port=8265 --disable-usage-stats --block
+    ports:
+      - "127.0.0.1:8265:8265"     
+    cpus: 2
+    mem_limit: 4g
+
+  ray-worker-1:                 
+    <<: *ray
+    command: ray start --address=ray-head:6379 --num-cpus=2 --disable-usage-stats --block
+    depends_on: [ray-head]
+    restart: on-failure
+    cpus: 2
+    mem_limit: 6g
+
+  ray-worker-2:
+    <<: *ray
+    command: ray start --address=ray-head:6379 --num-cpus=2 --disable-usage-stats --block
+    depends_on: [ray-head]
+    restart: on-failure
+    cpus: 2
+    mem_limit: 6g
+
+networks:
+  a3net:                         
+    driver: bridge
