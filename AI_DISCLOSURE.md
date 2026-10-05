@@ -13,9 +13,8 @@ This file states what the AI did and what I did.
 | Ray redesign | My first Ray version stopped because it ran out of memory. The AI read the Ray logs, found the cause and suggested the hash-bucket design that is in the final code. The report explains this suggestion in Section 6, "Performance Tuning Note". |
 | `docker-compose.yml` | gave the "command" for each volume and verified my written networks and clusters settings if something is not getting broken inherently.|
 | `Makefile`, `monitor.py` | Wrote the short run commands and the CPU and memory recorder(because i naively couldnt just keep on taking scrreenshots of htop eevry 5 seconds to monitor peak). |
-|
 | Figures | Made the three report figures from my resource logs (`logs/*_resources.csv`). |
-| Report and README |helped in making the report concise and presentable  |
+| Report, README and this disclosure | Made them visually better: formatted and styled them (layout, tables, headings) so they look clean. Also helped make the report concise and presentable. |
 
 
 ## What I did
@@ -24,7 +23,7 @@ This file states what the AI did and what I did.
 - I started the clusters and ran both final pipelines myself (`make spark-up`, `make spark-run`, `make ray-up`, `make ray-run`).
 - I took all the screenshots of the Spark UI, the Ray dashboard and `htop` during these runs.
 - I checked the results, the code and the report, and I recorded the video.
-- I wrote the cluster and network configuration, with a comment on each setting.  |
+- I wrote the cluster and network configuration, with a comment on each setting.
 
 ## Performance numbers
 
