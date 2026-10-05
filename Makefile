@@ -1,4 +1,5 @@
 # Assignment 3: short commands. The file docker-compose.yml defines the clusters.
+# First, download the data once: make data
 # Run only one cluster at a time:
 #   make spark-up  ->  make spark-run  ->  make spark-down
 #   make ray-up    ->  make ray-run    ->  make ray-down
@@ -6,8 +7,12 @@
 # Each run also records the CPU and memory of each container every 5 seconds (monitor.py).
 # For a smaller run: make spark-run FILES="data/raw/yellow_tripdata_2024-*.parquet"
 
-PY    := ../.venv/bin/python
+# Python for monitor.py and download_data.py. Use ../.venv if it exists. Otherwise use python3.
+PY    ?= $(if $(wildcard ../.venv/bin/python),../.venv/bin/python,python3)
 FILES ?= data/raw/*.parquet
+
+data:
+	$(PY) download_data.py
 
 spark-up:
 	docker compose --profile spark up -d
@@ -31,4 +36,4 @@ ray-run:
 ray-down:
 	docker compose --profile ray down
 
-.PHONY: spark-up spark-run spark-down ray-up ray-run ray-down
+.PHONY: data spark-up spark-run spark-down ray-up ray-run ray-down

@@ -12,7 +12,7 @@ This file states what the AI did and what I did.
 | `spark_clean.py`, `ray_clean.py` | Wrote the first drafts of both pipelines.|
 | Ray redesign | My first Ray version stopped because it ran out of memory. The AI read the Ray logs, found the cause and suggested the hash-bucket design that is in the final code. The report explains this suggestion in Section 6, "Performance Tuning Note". |
 | `docker-compose.yml` | Wrote the cluster and network configuration, with a comment on each setting. I read each setting until I could explain it. |
-| `docker-compose.yml` | Verified my written networks and clusters settings if something is not getting broken inherently.|
+| `docker-compose.yml` | gave the "command" for each volume and verified my written networks and clusters settings if something is not getting broken inherently.|
 | `Makefile`, `monitor.py` | Wrote the short run commands and the CPU and memory recorder(because i naively couldnt just keep on taking scrreenshots of htop eevry 5 seconds to monitor peak). |
 |
 | Figures | Made the three report figures from my resource logs (`logs/*_resources.csv`). |

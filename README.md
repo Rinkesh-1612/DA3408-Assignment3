@@ -17,7 +17,8 @@ The project compares the execution time, the CPU and memory usage, and the cost 
 | `docker-compose.yml` | The cluster configuration and the network setup. |
 | `Makefile` | Short commands to start the clusters, run the pipelines and stop the clusters. |
 | `monitor.py` | Records the CPU and memory of each container every 5 seconds during a run. |
-| `Assignment3_ETL.ipynb` | The first version of the pipeline (local Spark). It also downloads the data. |
+| `download_data.py` | Downloads the data from the TLC website into `data/`. |
+| `Assignment3_ETL.ipynb` | The first version of the pipeline (local Spark, no cluster). The benchmark does not use it. |
 | `logs/` | The output of each run and the CPU and memory records. |
 | `screenshots/spark/`, `screenshots/ray/` | Screenshots of the Spark UI, the Ray dashboard and `htop`. |
 | `report/report.pdf` | The benchmark report. |
@@ -31,12 +32,11 @@ The data is the NYC TLC yellow taxi trip data, January 2022 to June 2025.
 It has 42 monthly Parquet files (2.35 GB, 143,219,428 rows).
 The pipeline also uses the taxi zone lookup table (265 zones).
 
-To download the data:
-
-1. Open `Assignment3_ETL.ipynb`.
-2. Run the first code cell.
-3. Make sure that the Parquet files are in `data/raw/`.
-4. Make sure that the file `data/taxi_zone_lookup.csv` is available.
+To download the data, run `make data` (or `python download_data.py`).
+The script finds the links on the official TLC page and puts the 42 Parquet files in `data/raw/`.
+It also puts the zone table in `data/taxi_zone_lookup.csv`.
+The script does not download files that are already there.
+The two pipelines only read these files. They do not download anything.
 
 ## Pipeline
 
@@ -79,7 +79,7 @@ Each container mounts the project folder at `/app`. Thus all nodes use the same 
 You must have Docker with Docker Compose.
 The Makefile uses the Python environment in `../.venv`. This environment must have `psutil` for `monitor.py`.
 
-Run only one cluster at a time.
+Download the data first (`make data`). Then run only one cluster at a time.
 
 To run the Spark pipeline:
 
@@ -121,7 +121,4 @@ Ray used more memory.
 The report (`report/report.pdf`) gives the full analysis.
 
 ## AI usage
-
-I used AI help for code drafts, the Docker configuration and the report figures.
-All performance values come from real runs on this machine.
-The logs and the screenshots show these runs.
+Kindly see AI_DISCLOSURE.md file for that

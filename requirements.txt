@@ -1,0 +1,2 @@
+# Packages for the host (monitor.py). Spark and Ray run inside the Docker images.
+psutil==7.2.2

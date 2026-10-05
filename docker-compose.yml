@@ -3,7 +3,7 @@
 # Two clusters. Each cluster has 1 coordinator and 2 workers on one private network.
 # Run only one cluster at a time:
 #docker compose --profile spark up -d  /   docker compose --profile spark down
-#docker compose --profile ray up -d /   docker compose --profile ray down
+#docker compose --profile ray up -d   /   docker compose --profile ray down
 name: da-aiops-a3        
 x-spark: &spark            
   image: apache/spark:4.2.0-scala2.13-java17-python3-ubuntu
